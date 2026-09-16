@@ -9,7 +9,7 @@ PROJECT_DIR="$(pwd)"
 ## 1. 轻量 CPU PPO
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-rl.txt
+"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
 "$PROJECT_DIR/.conda/bin/python" scripts/train_ppo.py \
   --features rays --steps 8192 --rollout-steps 512 \
   --eval-seed-start 2000100 --output results/ppo/rays
@@ -68,7 +68,7 @@ export CUDA_VISIBLE_DEVICES=1
 完整训练链结束后：
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-viz.txt
+"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/viz.txt
 "$PROJECT_DIR/.conda/bin/python" scripts/summarize_staged_4m.py
 "$PROJECT_DIR/.conda/bin/python" scripts/plot_staged_4m.py
 "$PROJECT_DIR/.conda/bin/python" scripts/report_staged_4m.py

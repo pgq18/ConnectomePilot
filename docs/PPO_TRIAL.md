@@ -73,7 +73,7 @@ PPO 参数发生了实际更新；果蝇连接矩阵在训练前后的 SHA256 �
 - `rays/`、`fly/`：`policy.zip`、`initial_policy.zip`、`checkpoint.zip`、`run.json`、`evaluation.json`。
 - `progress.csv` 是每次 PPO 更新的训练日志；`train.monitor.csv` 是训练回合记录，分别位于两组目录内。
 - `comparison.json` 汇总两组完整记录；`backend-validation.json` 和 `playback-validation.json` 保存一致性检查结果。
-- `requirements-rl.lock.txt` 记录本项目 Conda 环境的实际依赖版本。
+- `requirements/snapshots/macos-rl.txt` 记录本项目 Conda 环境的实际依赖版本。
 
 重新进行一组独立训练，使用新输出目录保留现有结果：
 

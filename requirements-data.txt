@@ -1,2 +1,0 @@
--r requirements.txt
-pyarrow==22.0.0

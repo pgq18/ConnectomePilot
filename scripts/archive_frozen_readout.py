@@ -20,7 +20,8 @@ def main():
     sources=set(json.loads((OUT/'main/source-manifest.json').read_text()))
     for directory in ['flylab','scripts','tests']:
         sources.update(str(p.relative_to(ROOT)) for p in (ROOT/directory).glob('*.py'))
-    sources.update(['AGENTS.md','README.md','requirements-rl.linux.lock.txt','flylab/staged.py',
+    sources.update(['AGENTS.md','README.md','environment.yml','requirements/base.txt','requirements/train.txt',
+        'requirements/snapshots/linux-cu128-rl.txt','flylab/staged.py',
         'tests/test_staged.py','tests/test_resume.py','tests/test_plasticity.py',
         'scripts/summarize_frozen_readout.py','scripts/plot_frozen_readout.py','scripts/archive_frozen_readout.py',
         'docs/FROZEN_READOUT_PROTOCOL.md','docs/FROZEN_READOUT_TRIAL.md',

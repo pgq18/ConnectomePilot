@@ -8,6 +8,24 @@ ConnectomePilot connects the MaleCNS anatomical connectivity graph to a simulate
 
 The best-performing training approach so far is to **jointly train internal connections and readout for 65,536 steps, then freeze the connections and continue training the readout to 4,194,304 total steps.**
 
+## Demos
+
+Two obstacle-avoidance rollouts with the same 4M-step policy (training seed 72), after joint training followed by frozen-connectome readout training. Each map was selected in advance and run once. These are individual demonstrations; aggregate evaluation is reported below.
+
+### Map 5900000 · goal reached in 9.4 s
+
+https://github.com/user-attachments/assets/b97df5b9-8961-4436-bbdb-86c1c4d8a3e9
+
+10.14 m traveled · 9.9 cm minimum body clearance · [Download MP4](https://github.com/pgq18/ConnectomePilot/releases/download/v0.1.0/navigation-map-5900000.mp4)
+
+### Map 5900001 · goal reached in 11.2 s
+
+https://github.com/user-attachments/assets/ffebcfc2-c512-4cb2-a59d-9f2ae0e45254
+
+11.07 m traveled · 10.2 cm minimum body clearance · [Download MP4](https://github.com/pgq18/ConnectomePilot/releases/download/v0.1.0/navigation-map-5900001.mp4)
+
+Times above are simulated travel times; the videos include opening and closing still frames. The recordings show robot motion, obstacle sensing, control residuals, and modeled descending-neuron activity. [How to reproduce the videos](docs/VIDEOS.md).
+
 ## Current results
 
 Evaluated on the same 500 held-out test maps with three training seeds:
@@ -22,7 +40,7 @@ Evaluated on the same 500 held-out test maps with three training seeds:
 
 The 92.6% result describes the highest observed test point; the single model selected by the predefined rule achieved 89.4%. Longer training did not improve performance monotonically, and average changes in angular velocity commands increased. See the [experiment report](docs/STAGED_4M_TRIAL.md) and [predefined protocol](docs/STAGED_4M_PROTOCOL.md).
 
-The model with the highest observed test score reached the goal on two new demonstration maps: map 5900000 in 9.4 seconds and map 5900001 in 11.2 seconds of simulated time. Videos are available in the [v0.1.0 release](https://github.com/pgq18/ConnectomePilot/releases/tag/v0.1.0).
+The demos above use the seed-72 model with the highest retrospectively observed test score.
 
 ## Four ways to use the project
 
@@ -44,7 +62,6 @@ git clone https://github.com/pgq18/ConnectomePilot.git
 cd ConnectomePilot
 PROJECT_DIR="$(pwd)"
 conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-data.txt
 ./launch.sh --open
 ```
 
@@ -72,10 +89,12 @@ Downloads support validation, retries, and resumption. If a proxy is needed, cop
 ### Install training dependencies
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-rl.txt
+"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
 ```
 
-The web demo and small sensor-based PPO runs can use a CPU. The current staged trainers require NVIDIA CUDA. See the [training guide](docs/TRAINING.md) and [workstation guide](docs/WORKSTATION.md) for GPU setup, measured resource use, and reproduction commands. The `requirements-rl*.lock.txt` files record the original experiment environments; macOS and Linux snapshots are not interchangeable.
+The web demo and small sensor-based PPO runs can use a CPU. The current staged trainers require NVIDIA CUDA. See the [training guide](docs/TRAINING.md) and [workstation guide](docs/WORKSTATION.md) for GPU setup, measured resource use, and reproduction commands.
+
+Conda setup installs the base simulation and data dependencies automatically. Add `requirements/train.txt` for training or `requirements/viz.txt` for plots and video rendering, using the same environment. [Dependency profiles and historical snapshots](requirements/README.md) are kept under `requirements/`; the snapshots are references for older experiments, not additional installation steps.
 
 ## How it works
 
@@ -107,6 +126,7 @@ tests/         Environment, propagation, gradients, freezing, resumption, and se
 web/           Chinese-language interactive interface
 config/        Public network configuration example
 docs/          Architecture, usage guides, experiment protocols, and reports
+requirements/  Base, training, visualization profiles, and historical snapshots
 data/          Local downloaded and processed data (excluded from Git)
 results/       Local models, logs, plots, and videos (excluded from Git)
 ```
@@ -125,7 +145,7 @@ Raw data and model checkpoints are not distributed with the Git source. Prepare 
 
 ## Validation
 
-After installing the data and training dependencies:
+After installing the training dependencies:
 
 ```bash
 "$PROJECT_DIR/.conda/bin/python" -m unittest discover -s tests -v

@@ -7,7 +7,7 @@ Use a dedicated project Conda prefix. Run Python through its absolute path:
 ```bash
 PROJECT_DIR="$(pwd)"
 conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-data.txt -r requirements-rl.txt
+"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
 "$PROJECT_DIR/.conda/bin/python" -m unittest discover -s tests -v
 ```
 

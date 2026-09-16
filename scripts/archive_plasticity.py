@@ -21,7 +21,8 @@ def main():
     for folder in ['flylab','scripts']:
         files.update(str(p.relative_to(ROOT)) for p in (ROOT/folder).glob('*.py'))
     files.update(str(p.relative_to(ROOT)) for p in (ROOT/'tests').glob('test_*.py'))
-    files.update(['AGENTS.md','README.md','requirements-rl.linux.lock.txt',
+    files.update(['AGENTS.md','README.md','environment.yml','requirements/base.txt','requirements/train.txt',
+        'requirements/snapshots/linux-cu128-rl.txt',
                   'docs/PLASTICITY_PROTOCOL.md','docs/PLASTICITY_TRIAL.md','data/plasticity/graph.npz',
                   'data/plasticity/manifest.json','scripts/summarize_plasticity.py','scripts/plot_plasticity.py',
                   'scripts/diagnose_plasticity.py','scripts/archive_plasticity.py',

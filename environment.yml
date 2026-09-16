@@ -3,5 +3,4 @@ dependencies:
   - python=3.10
   - pip
   - pip:
-      - numpy==2.2.6
-      - scipy==1.15.3
+      - -r requirements/base.txt

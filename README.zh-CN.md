@@ -10,6 +10,24 @@ ConnectomePilot is a connectome-informed reinforcement learning lab for simulate
 
 当前效果最好的训练路线是：**前 65,536 步联合学习脑内连接和读出，随后冻结连接，继续训练读出至 4,194,304 步。**
 
+## Demo 视频
+
+两段避障录像使用同一个训练种子 72、4M 步策略，采用先联合训练、再冻结脑内连接续训读出的方式。每张地图预先选定，只运行一次。这是单回合演示，整体评估结果见下节。
+
+### 地图 5900000 · 9.4 秒到达目标
+
+https://github.com/user-attachments/assets/b97df5b9-8961-4436-bbdb-86c1c4d8a3e9
+
+路径 10.14 m · 最小车体间隙 9.9 cm · [下载 MP4](https://github.com/pgq18/ConnectomePilot/releases/download/v0.1.0/navigation-map-5900000.mp4)
+
+### 地图 5900001 · 11.2 秒到达目标
+
+https://github.com/user-attachments/assets/ffebcfc2-c512-4cb2-a59d-9f2ae0e45254
+
+路径 11.07 m · 最小车体间隙 10.2 cm · [下载 MP4](https://github.com/pgq18/ConnectomePilot/releases/download/v0.1.0/navigation-map-5900001.mp4)
+
+上述用时为仿真行驶时间，视频首尾另有静帧。画面同时展示行驶轨迹、障碍感知、控制残差和模型中的下行神经元活动。[视频复现方法](docs/VIDEOS.md)。
+
 ## 当前结果
 
 同一批 500 张独立测试地图，3 个训练种子：
@@ -24,7 +42,7 @@ ConnectomePilot is a connectome-informed reinforcement learning lab for simulate
 
 92.6% 用于展示本轮观察到的最高结果；按预定规则选出的单模型成绩为 89.4%。训练变长并非持续变好，平均转向指令变化也有所增加。详见[实验报告](docs/STAGED_4M_TRIAL.md)与[预定协议](docs/STAGED_4M_PROTOCOL.md)。
 
-最高单点模型的两次新地图演示：地图 5900000 用时 9.4 秒，地图 5900001 用时 11.2 秒，均成功到达。演示视频见 [v0.1.0 发布页](https://github.com/pgq18/ConnectomePilot/releases/tag/v0.1.0)。
+上方视频使用测试曲线事后观察到最高单点的种子 72 模型。
 
 ## 四条使用路线
 
@@ -46,7 +64,6 @@ git clone https://github.com/pgq18/ConnectomePilot.git
 cd ConnectomePilot
 PROJECT_DIR="$(pwd)"
 conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-data.txt
 ./launch.sh --open
 ```
 
@@ -74,10 +91,12 @@ conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
 ### 安装训练依赖
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-rl.txt
+"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
 ```
 
-网页和小型传感器 PPO 可在 CPU 上运行；当前分阶段训练器要求 NVIDIA CUDA。GPU 安装方法、实测资源和复现命令见[训练指南](docs/TRAINING.md)及[工作站指南](docs/WORKSTATION.md)。`requirements-rl*.lock.txt` 记录既有实验环境，Mac 和 Linux 快照不能互换。
+网页和小型传感器 PPO 可在 CPU 上运行；当前分阶段训练器要求 NVIDIA CUDA。GPU 安装方法、实测资源和复现命令见[训练指南](docs/TRAINING.md)及[工作站指南](docs/WORKSTATION.md)。
+
+Conda 创建环境时自动安装基础仿真与数据依赖。训练时补装 `requirements/train.txt`，绘图与渲染视频时补装 `requirements/viz.txt`，都使用同一个环境。[依赖清单与历史快照](requirements/README.md)统一放在 `requirements/`；快照仅用于核对旧实验环境，无须额外逐份安装。
 
 ## 工作原理
 
@@ -109,6 +128,7 @@ tests/         环境、数值传播、学习梯度、冻结、续训与选模�
 web/           中文交互界面
 config/        可公开的网络配置示例
 docs/          架构、使用路线、实验协议和结果报告
+requirements/  基础、训练、可视化依赖及历史环境快照
 data/          本地下载与处理后的数据（不入 Git）
 results/       本地模型、日志、图表和视频（不入 Git）
 ```
@@ -124,7 +144,7 @@ results/       本地模型、日志、图表和视频（不入 Git）
 
 ## 验证
 
-安装数据及训练依赖后：
+安装训练依赖后：
 
 ```bash
 "$PROJECT_DIR/.conda/bin/python" -m unittest discover -s tests -v

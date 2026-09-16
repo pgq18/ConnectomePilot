@@ -9,7 +9,7 @@
 |5900000|到达|9.4 s|10.14 m|9.9 cm|
 |5900001|到达|11.2 s|11.07 m|10.2 cm|
 
-视频在 [v0.1.0 发布页](https://github.com/pgq18/ConnectomePilot/releases/tag/v0.1.0)，文件名分别为 `navigation-map-5900000.mp4` 和 `navigation-map-5900001.mp4`。它们是单回合展示，不能取代独立测试成功率。
+可在 [README](../README.zh-CN.md#demo-视频) 直接播放两段视频。完整 MP4 在 [v0.1.0 发布页](https://github.com/pgq18/ConnectomePilot/releases/tag/v0.1.0)，文件名分别为 `navigation-map-5900000.mp4` 和 `navigation-map-5900001.mp4`。它们是单回合展示，不能取代独立测试成功率。
 
 ## 记录一次回合
 
@@ -28,7 +28,7 @@ CUDA_VISIBLE_DEVICES=1 "$PROJECT_DIR/.conda/bin/python" scripts/record_navigatio
 ## 渲染与编码
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-viz.txt
+"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/viz.txt
 "$PROJECT_DIR/.conda/bin/python" scripts/render_navigation_demo.py \
   results/videos/map-5900002 --preview
 "$PROJECT_DIR/.conda/bin/python" scripts/render_navigation_demo.py \

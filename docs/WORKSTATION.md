@@ -7,15 +7,14 @@
 ```bash
 PROJECT_DIR="$(pwd)"
 conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-data.txt
 "$PROJECT_DIR/.conda/bin/python" -m pip install \
   torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-rl.txt
+"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
 "$PROJECT_DIR/.conda/bin/python" -c \
   'import torch; print(torch.__version__); print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0))'
 ```
 
-该 PyTorch/CUDA 组合来自本项目 RTX 5090 的既有环境。主机需有兼容 NVIDIA 驱动；其他硬件按 [PyTorch 官方安装说明](https://pytorch.org/get-started/locally/)选择构建。完整历史依赖见 `requirements-rl.linux.lock.txt`；不要把 Mac Conda 目录复制到 Linux。
+该 PyTorch/CUDA 组合来自本项目 RTX 5090 的既有环境。主机需有兼容 NVIDIA 驱动；其他硬件按 [PyTorch 官方安装说明](https://pytorch.org/get-started/locally/)选择构建。完整历史依赖见 `requirements/snapshots/linux-cu128-rl.txt`；不要把 Mac Conda 目录复制到 Linux。
 
 在启动任务前检查空闲显存和现有工作。用 `CUDA_VISIBLE_DEVICES` 指定允许使用的物理卡，训练器里传对应逻辑设备编号：
 
