@@ -50,6 +50,14 @@ conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
 
 Open <http://127.0.0.1:8765>. The base controller and rule-based obstacle avoidance work without downloading connectome data. Fly-brain mode remains disabled until the data is available. On macOS, you can also double-click `launch.command`.
 
+### Set goals interactively
+
+Click an empty spot on the map to place a goal. The displayed coordinates use meters. You can change the goal while the robot is moving; when paused, select a goal and press **Continue / Start**.
+
+Each goal change starts a new leg from the robot's current position and resets its trajectory, timer, and metrics. Goals must leave enough room for the robot around obstacles and walls. After a collision, reset the scene first. Resetting the same map or switching controllers preserves your chosen goal; changing the map restores the default goal. Use **Restore default goal** to switch back explicitly.
+
+The published benchmark scores use the original fixed-goal tasks. Performance on arbitrary interactive goals has not been benchmarked.
+
 ### Prepare the measured connectome
 
 ```bash

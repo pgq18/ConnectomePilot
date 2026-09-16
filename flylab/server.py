@@ -65,10 +65,19 @@ class Lab:
                 else:
                     controller = Controller(mode, self.brain, gain)
                 world = NavigationWorld(seed, scenario)
+                if (seed, scenario) == (self.world.seed, self.world.scenario):
+                    world.set_goal(*self.world.goal)
                 controller.reset(seed)
                 self.world, self.controller = world, controller
                 self.telemetry = {"base": [0, 0], "residual": [0, 0], "final": [0, 0], "neural": {}}
                 self.paused, self.error = True, ""
+                self.elapsed_ms = 0
+            elif cmd == "goal":
+                self.world.set_goal(body["x"], body["y"])
+                self.controller.reset(self.world.seed)
+                self.telemetry = {"base": [0, 0], "residual": [0, 0], "final": [0, 0], "neural": {}}
+                self.paused = self.paused or self.world.status != "running"
+                self.error, self.elapsed_ms = "", 0
             elif cmd == "gain":
                 gain = float(body["value"])
                 if not math.isfinite(gain) or not 0 <= gain <= 2:

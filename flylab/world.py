@@ -25,6 +25,7 @@ class Action:
 
 class NavigationWorld:
     width, height, radius, dt, max_steps = 12.0, 8.0, 0.19, 0.1, 600
+    default_goal = (11.1, 4.0)
     ray_angles = tuple(math.radians(a) for a in (-90, -65, -40, -20, 0, 20, 40, 65, 90))
     ray_range = 3.0
 
@@ -37,7 +38,7 @@ class NavigationWorld:
         self.seed, self.scenario = int(seed), scenario
         rng = random.Random(self.seed)
         self.x, self.y, self.heading = 0.8, 4.0, 0.0
-        self.goal = (11.1, 4.0)
+        self.goal = self.default_goal
         if scenario == "single":
             self.obstacles = [(5.5, 4.0 + rng.uniform(-0.4, 0.4), 0.65)]
         elif scenario == "slalom":
@@ -56,6 +57,24 @@ class NavigationWorld:
         self.status, self.last_action = "running", Action(0, 0)
         self.path = [(self.x, self.y)]
         self.min_clearance = self.clearance(self.x, self.y)
+        return self.observe()
+
+    def set_goal(self, x, y):
+        """Start a new interactive leg at the current pose; benchmark reset is unchanged."""
+        if any(isinstance(v, bool) or not isinstance(v, (int, float)) for v in (x, y)):
+            raise ValueError("目标坐标必须是有效数字")
+        if not all(math.isfinite(v) for v in (x, y)):
+            raise ValueError("目标坐标必须是有限数字")
+        if self.clearance(x, y) <= 0:
+            raise ValueError("请在地图空白处选择目标，并为小车留出远离障碍和墙边的空间")
+        if self.status == "collision":
+            raise ValueError("小车已经碰撞，请先重置场景再设置目标")
+        self.goal = (float(x), float(y))
+        self.steps, self.path_length, self.reward = 0, 0.0, 0.0
+        self.last_action = Action(0, 0)
+        self.path = [(self.x, self.y)]
+        self.min_clearance = self.clearance(self.x, self.y)
+        self.status = "success" if self.observe()["goal_distance"] < 0.4 else "running"
         return self.observe()
 
     def clearance(self, x, y):
@@ -123,6 +142,7 @@ class NavigationWorld:
     def state(self):
         return {"width": self.width, "height": self.height, "radius": self.radius,
                 "x": self.x, "y": self.y, "heading": self.heading, "goal": self.goal,
+                "default_goal": self.default_goal,
                 "obstacles": self.obstacles, "path": self.path[-1000:],
                 "ray_angles": self.ray_angles, "observation": self.observe(),
                 "steps": self.steps, "sim_seconds": round(self.steps*self.dt, 1),
