@@ -1,43 +1,43 @@
-# ConnectomePilot · 蝇脑领航
+# ConnectomePilot
 
-**用真实果蝇连接组探索机器人残差控制与强化学习。**
+**English** | [简体中文](README.zh-CN.md)
 
-ConnectomePilot is a connectome-informed reinforcement learning lab for simulated robot navigation.
+**Explore robot residual control and reinforcement learning with a real fly connectome.**
 
-项目把 MaleCNS 解剖连接图接入二维移动机器人：传感器输入驱动神经活动，策略读出给基础导航动作增加修正。包含中文交互演示、整脑与子图模型、PPO 对照、连接权重学习、分阶段续训和视频导出。
+ConnectomePilot connects the MaleCNS anatomical connectivity graph to a simulated mobile robot. Sensor inputs drive neural activity, and a policy readout produces corrections to a base navigation controller. The project includes an interactive Chinese-language demo, whole-brain and subgraph models, PPO baselines, learnable connection weights, staged training, and video export.
 
-当前效果最好的训练路线是：**前 65,536 步联合学习脑内连接和读出，随后冻结连接，继续训练读出至 4,194,304 步。**
+The best-performing training approach so far is to **jointly train internal connections and readout for 65,536 steps, then freeze the connections and continue training the readout to 4,194,304 total steps.**
 
-## 当前结果
+## Current results
 
-同一批 500 张独立测试地图，3 个训练种子：
+Evaluated on the same 500 held-out test maps with three training seeds:
 
-|统计口径|成功率|
+| Measurement | Success rate |
 |---|---:|
-|1,048,576 步起点，三个种子平均|85.1%|
-|4,194,304 步终点，三个种子平均|88.6%|
-|每个种子先按验证集选模，再取测试均值|89.6%|
-|跨种子按预定验证规则选出的单模型|89.4%|
-|测试曲线事后观察到的最高单点，种子 72|92.6%（463/500）|
+| Mean across three seeds at 1,048,576 steps | 85.1% |
+| Mean across three seeds at 4,194,304 steps | 88.6% |
+| Mean test result after selecting a checkpoint per seed using validation maps | 89.6% |
+| Single model selected across seeds using the predefined validation rule | 89.4% |
+| Highest test point observed retrospectively, seed 72 | 92.6% (463/500) |
 
-92.6% 用于展示本轮观察到的最高结果；按预定规则选出的单模型成绩为 89.4%。训练变长并非持续变好，平均转向指令变化也有所增加。详见[实验报告](docs/STAGED_4M_TRIAL.md)与[预定协议](docs/STAGED_4M_PROTOCOL.md)。
+The 92.6% result describes the highest observed test point; the single model selected by the predefined rule achieved 89.4%. Longer training did not improve performance monotonically, and average changes in angular velocity commands increased. See the [experiment report](docs/STAGED_4M_TRIAL.md) and [predefined protocol](docs/STAGED_4M_PROTOCOL.md).
 
-最高单点模型的两次新地图演示：地图 5900000 用时 9.4 秒，地图 5900001 用时 11.2 秒，均成功到达。演示视频见 [v0.1.0 发布页](https://github.com/pgq18/ConnectomePilot/releases/tag/v0.1.0)。
+The model with the highest observed test score reached the goal on two new demonstration maps: map 5900000 in 9.4 seconds and map 5900001 in 11.2 seconds of simulated time. Videos are available in the [v0.1.0 release](https://github.com/pgq18/ConnectomePilot/releases/tag/v0.1.0).
 
-## 四条使用路线
+## Four ways to use the project
 
-|想做什么|入口|说明|
+| Goal | Entry point | What it provides |
 |---|---|---|
-|交互体验避障|`./launch.sh --open`|基础控制、规则对照、整脑 LIF、早期 SB3 PPO|
-|学习内部连接|`scripts/train_plasticity.py`|读出 PPO、脑内连接＋读出 PPO、局部三因素学习|
-|复现分阶段训练|[训练指南](docs/TRAINING.md)|65k 联合 → 262k 冻结 → 1M → 4M；末阶段支持三进程并行|
-|回放模型并导出视频|[视频指南](docs/VIDEOS.md)|记录一次真实策略回合 → 渲染 → 编码并校验|
+| Try interactive obstacle avoidance | `./launch.sh --open` | Base controller, rule-based baseline, whole-brain LIF model, and early SB3 PPO policies |
+| Learn internal connection strengths | `scripts/train_plasticity.py` | Readout-only PPO, joint connection/readout PPO, and local three-factor learning |
+| Reproduce staged training | [Training guide](docs/TRAINING.md) | 65k joint → 262k frozen → 1M → 4M; the final stage supports three parallel training processes |
+| Run a policy and export video | [Video guide](docs/VIDEOS.md) | Record an actual policy rollout, render frames, then encode and validate the video |
 
-网页仍展示早期控制器；最新 4M 子图策略通过离线评估和视频入口运行，尚未接入网页菜单。
+The web interface uses the earlier controllers. The latest 4M subgraph policy runs through offline evaluation and video tools and is not yet available in the web menu.
 
-## 快速开始
+## Quick start
 
-需要已安装 Conda。所有 Python 包安装到项目独立环境；从仓库根目录执行：
+Install Conda first. All Python packages belong in the project-specific environment. Run these commands from the repository root:
 
 ```bash
 git clone https://github.com/pgq18/ConnectomePilot.git
@@ -48,82 +48,85 @@ conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
 ./launch.sh --open
 ```
 
-打开 <http://127.0.0.1:8765>。不下载连接数据也可使用基础控制和规则避障；缺少数据时果蝇脑选项禁用。Mac 可双击 `launch.command`。
+Open <http://127.0.0.1:8765>. The base controller and rule-based obstacle avoidance work without downloading connectome data. Fly-brain mode remains disabled until the data is available. On macOS, you can also double-click `launch.command`.
 
-### 准备真实连接组
+### Prepare the measured connectome
 
 ```bash
 "$PROJECT_DIR/.conda/bin/python" scripts/prepare_data.py --check-network
 "$PROJECT_DIR/.conda/bin/python" scripts/prepare_data.py
 ```
 
-从 MaleCNS 官方存储下载约 1.2 GB 原始表，生成稀疏权重、注释和来源哈希。预处理需要额外内存和磁盘空间；本项目加载的全图含 **166,700 个神经元、25,582,938 条有向连接**。
+The script downloads approximately 1.2 GB of raw tables from the official MaleCNS storage and produces sparse weights, annotations, and provenance hashes. Preprocessing requires additional RAM and disk space. The full graph loaded by this project contains **166,700 neurons and 25,582,938 directed connections**.
 
-下载支持校验、重试和断点续传。需要代理时，复制 `config/network.example.json` 为 `config/network.local.json` 并修改，或使用 `--proxy http://127.0.0.1:端口`；`--no-proxy` 强制直连。Mac 的 `prepare-and-launch.command` 会先准备数据，再打开网页。
+Downloads support validation, retries, and resumption. If a proxy is needed, copy `config/network.example.json` to `config/network.local.json` and edit it, or pass `--proxy http://127.0.0.1:PORT`. Use `--no-proxy` for a direct connection. On macOS, `prepare-and-launch.command` prepares the data before opening the web interface.
 
-### 安装训练依赖
+### Install training dependencies
 
 ```bash
 "$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements-rl.txt
 ```
 
-网页和小型传感器 PPO 可在 CPU 上运行；当前分阶段训练器要求 NVIDIA CUDA。GPU 安装方法、实测资源和复现命令见[训练指南](docs/TRAINING.md)及[工作站指南](docs/WORKSTATION.md)。`requirements-rl*.lock.txt` 记录既有实验环境，Mac 和 Linux 快照不能互换。
+The web demo and small sensor-based PPO runs can use a CPU. The current staged trainers require NVIDIA CUDA. See the [training guide](docs/TRAINING.md) and [workstation guide](docs/WORKSTATION.md) for GPU setup, measured resource use, and reproduction commands. The `requirements-rl*.lock.txt` files record the original experiment environments; macOS and Linux snapshots are not interchangeable.
 
-## 工作原理
+## How it works
 
 ```mermaid
 flowchart LR
-    R[距离与接近速度] --> E[固定方向编码]
-    E --> B[MaleCNS 真实连接子图]
-    B --> D[1314 个下行神经元活动]
-    D --> P[PPO 读出]
-    C[目标与机器人状态] --> P
-    G[目标方向] --> A[基础导航动作]
-    P --> X[速度和转向残差]
-    A --> S[合成与限幅]
+    R[Range and closing speed] --> E[Fixed directional encoding]
+    E --> B[Measured MaleCNS subgraph]
+    B --> D[Activity of 1314 descending neurons]
+    D --> P[PPO readout]
+    C[Goal and robot state] --> P
+    G[Goal direction] --> A[Base navigation action]
+    P --> X[Speed and turning residuals]
+    A --> S[Combine and bound actions]
     X --> S
-    S --> W[二维仿真机器人]
+    S --> W[Simulated 2D robot]
     W --> R
 ```
 
-最新策略使用 **4,096 个神经元、459,342 条允许连接**，保留测量得到的连接位置，在联合训练阶段学习连接强度。冻结后，神经传播仍逐步执行，PPO 只更新 **3,960 个 actor/critic 读出参数**。
+The latest policy uses **4,096 neurons and 459,342 permitted connections**. It retains measured connection locations and learns their strengths during joint training. After freezing, neural propagation still runs at every control step; PPO updates only the **3,960 actor/critic readout parameters**.
 
-连接位置来自解剖数据；递质符号、归一化权重、感觉编码、简化神经动态和动作映射包含工程建模。它不包含生物果蝇的记忆，也不代表完整生物脑复现。目前仅验证二维仿真，机器人动力学仿真和硬件接入尚待实现。
+Connection locations come from anatomical data. Transmitter signs, normalized weights, sensory encoding, simplified neural dynamics, and action mappings involve engineering assumptions. The model does not contain a biological fly's learned memories or reproduce a complete biological brain. Validation currently covers a 2D simulation; robot dynamics simulators and hardware integration remain future work.
 
-## 代码与文档
+## Code and documentation
 
 ```text
-flylab/        仿真世界、控制器、神经模型、学习和状态恢复
-scripts/       数据准备、训练、评估、审计、图表和视频工具
-tests/         环境、数值传播、学习梯度、冻结、续训与选模测试
-web/           中文交互界面
-config/        可公开的网络配置示例
-docs/          架构、使用路线、实验协议和结果报告
-data/          本地下载与处理后的数据（不入 Git）
-results/       本地模型、日志、图表和视频（不入 Git）
+flylab/        Simulation, controllers, neural models, learning, and state recovery
+scripts/       Data preparation, training, evaluation, audits, plots, and video tools
+tests/         Environment, propagation, gradients, freezing, resumption, and selection
+web/           Chinese-language interactive interface
+config/        Public network configuration example
+docs/          Architecture, usage guides, experiment protocols, and reports
+data/          Local downloaded and processed data (excluded from Git)
+results/       Local models, logs, plots, and videos (excluded from Git)
 ```
 
-- [功能实现与模块对应](docs/ARCHITECTURE.md)
-- [训练与评估复现](docs/TRAINING.md)
-- [视频导出](docs/VIDEOS.md)
-- [文档与实验索引](docs/README.md)
-- [机器人接口与扩展](docs/ROBOTICS.md)
-- [贡献指南](CONTRIBUTING.md)
+Detailed guides and experiment reports are currently in Chinese:
 
-原始数据和模型检查点不随 Git 源码分发；从官方源准备数据后按指南训练。历史报告保留实际测量值，提到的 `results/` 产物位于实验工作目录。
+- [Architecture and module responsibilities](docs/ARCHITECTURE.md)
+- [Training and evaluation reproduction](docs/TRAINING.md)
+- [Video export](docs/VIDEOS.md)
+- [Documentation and experiment index](docs/README.md)
+- [Robot interfaces and extensions](docs/ROBOTICS.md)
 
-## 验证
+See also the English [contribution guide](CONTRIBUTING.md).
 
-安装数据及训练依赖后：
+Raw data and model checkpoints are not distributed with the Git source. Prepare the data from the official source, then follow the training guide. Historical reports preserve measured results; the referenced `results/` artifacts reside in the experiment workspace.
+
+## Validation
+
+After installing the data and training dependencies:
 
 ```bash
 "$PROJECT_DIR/.conda/bin/python" -m unittest discover -s tests -v
 ```
 
-测试使用明确标注的人工小图验证接口、数值计算和状态恢复，不作为生物实验结果。GitHub Actions 在独立 Conda 环境执行 CPU 测试，无需下载 MaleCNS 或训练模型。
+Tests use explicitly labeled small synthetic graphs to verify interfaces, numerical calculations, and state recovery. These fixtures are not biological experiment results. GitHub Actions runs CPU tests in a dedicated Conda environment without downloading MaleCNS or training models.
 
-## 来源与许可
+## Sources and licensing
 
-代码采用 [MIT License](LICENSE)。MaleCNS 数据许可独立于代码，遵循 [CC BY 4.0](https://male-cns.janelia.org/download/)。
+Code is released under the [MIT License](LICENSE). MaleCNS data has a separate [CC BY 4.0 license](https://male-cns.janelia.org/download/).
 
-数据处理与早期简化动力学参考 [fly.ai](https://github.com/alextitonis/fly.ai)；固定连接位置的 PPO 与奖励调制规则借鉴 [FlyDoom](https://github.com/eganeganegan/flydoom)。其他实验参考及适配说明见[第三方说明](docs/THIRD_PARTY.md)。
+Data preparation and early simplified dynamics draw on [fly.ai](https://github.com/alextitonis/fly.ai). PPO with fixed connection locations and reward-modulated learning rules are inspired by [FlyDoom](https://github.com/eganeganegan/flydoom). See [third-party notices](docs/THIRD_PARTY.md) for other references and adaptation details.
