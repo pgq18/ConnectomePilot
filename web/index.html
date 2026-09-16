@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ConnectomePilot · 蝇脑领航</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><div class="brand"><span class="mark">✳</span><div>蝇脑领航<small>CONNECTOMEPILOT / ROBOTICS LAB</small></div></div><div class="header-right"><span class="pill">01 / 移动避障</span><span id="connection" class="connection">连接中</span></div></header>
+<main>
+<section class="intro"><div><div class="eyebrow">从神经连接，到一个转弯</div><h1>给果蝇脑一辆小车。</h1><p>在同一条路线，比较基础控制、规则避障与果蝇脑的动作修正。</p></div><div class="intro-note"><span class="dot"></span>本地模拟环境<small>基础动作 + 残差动作 → 最终控制</small></div></section>
+<div class="layout">
+<aside class="panel settings"><div class="section-title"><span>实验设置</span><span class="dim">01</span></div>
+<label for="mode">谁来修正动作</label><select id="mode"><option value="base">仅基础控制器</option><option value="reflex" selected>规则避障 · 对照组</option><option value="fly" disabled>果蝇脑 · 等待连接数据</option><option value="ppo-rays" disabled>PPO · 距离传感器（待训练）</option><option value="ppo-fly" disabled>PPO · 果蝇脑（待训练）</option></select>
+<p class="help" id="mode-help">用距离传感器直接计算转向，作为工程对照。</p>
+<label for="scenario">测试场景</label><div class="scenario-buttons"><button class="scenario" data-value="single">单障碍</button><button class="scenario active" data-value="slalom">绕桩</button><button class="scenario" data-value="clutter">散布障碍</button></div>
+<label for="seed">场景编号 <span class="dim">相同编号可复现</span></label><div class="seed-row"><input id="seed" type="number" value="1" min="0" max="2147483647"><button id="next-seed" title="换一个场景">↻</button></div>
+<div class="range-title"><label for="gain">动作修正强度</label><output id="gain-label">1.00×</output></div><input id="gain" type="range" min="0" max="2" step="0.05" value="1"><div class="range-ends"><span>关闭修正</span><span>2 倍</span></div>
+<div class="controls"><button id="play" class="primary">开始实验 <span>▶</span></button><button id="reset" class="secondary">重置同一场景</button></div>
+<div class="keyboard">空格 开始 / 暂停<span>R 重置</span></div>
+<div class="data-card"><div class="eyebrow">神经连接数据</div><strong id="brain-title">正在检查…</strong><p id="brain-message"></p><span id="brain-meta" class="mono">MaleCNS v1.0</span></div>
+</aside>
+<section class="center"><div class="panel arena-panel"><div class="arena-top"><div><span class="live-dot"></span><strong id="arena-mode">规则避障</strong><span class="dim"> / 12 × 8 m</span></div><span id="status" class="status">就绪</span></div><div class="canvas-wrap"><canvas id="arena" aria-label="小车避障实验场景"></canvas><div id="overlay" class="overlay"><span>READY WHEN YOU ARE</span><strong>从起点，向目标出发。</strong><small>点击“开始实验”，观察传感和动作变化。</small></div></div><div class="legend"><span><i class="robot-key"></i>机器人</span><span><i class="goal-key"></i>目标</span><span><i class="ray-key"></i>距离传感</span><span><i class="path-key"></i>轨迹</span><label><input id="show-rays" type="checkbox" checked>显示感知</label></div></div>
+<div class="metrics"><div class="panel metric"><span>距目标</span><strong id="distance">—<small>m</small></strong></div><div class="panel metric"><span>行驶距离</span><strong id="travel">—<small>m</small></strong></div><div class="panel metric"><span>最小间距</span><strong id="clearance">—<small>m</small></strong></div><div class="panel metric"><span>模拟时间</span><strong id="sim-time">0.0<small>s</small></strong></div></div>
+<div id="error" class="error" hidden></div>
+</section>
+<aside class="right"><section class="panel telemetry"><div class="section-title"><span>动作如何产生</span><span class="dim">02</span></div><div class="flow-label">基础控制器</div><p class="help">根据目标方向，给出前进和转向。</p><div class="action-row"><span>前进</span><b id="base-v">0.00</b><small>m/s</small></div><div class="action-row"><span>转向</span><b id="base-w">0.00</b><small>rad/s</small></div><div class="flow-plus">+</div><div class="flow-label teal">动作残差</div><div class="action-row"><span>速度修正</span><b id="res-v">0.00</b><small>m/s</small></div><div class="action-row"><span>转向修正</span><b id="res-w">0.00</b><small>rad/s</small></div><div class="flow-equal">↓ 限幅后执行</div><div class="final-action"><span>最终转向</span><strong id="final-w">0.00</strong><small>rad/s</small></div></section>
+<section class="panel neural"><div class="section-title"><span>脑活动</span><span class="dim">03</span></div><div id="neural-placeholder" class="neural-placeholder"><span>◌</span><p>选择果蝇脑后，这里显示真实计算的神经元放电。</p></div><div id="neural-live" hidden><div class="neural-bar"><label>左侧输出 <b id="left-hz">0 Hz</b></label><div><i id="left-bar"></i></div></div><div class="neural-bar"><label>右侧输出 <b id="right-hz">0 Hz</b></label><div><i id="right-bar"></i></div></div><p class="help">距离 → 接近威胁神经元 → 连接网络 → 下行神经元 → 动作修正</p><div class="neural-stats"><span id="neurons">—</span><span id="compute">—</span></div><p class="neural-note" id="learning-note">固定连接权重 · 本轮无学习</p></div></section></aside>
+</div>
+<section class="bottom-note"><span>下一站 · 机器人</span><p>保留相同的观测、基础动作、残差和奖励接口，后续可接移动机器人或机械臂仿真。当前仅在二维世界验证控制流程。</p><button id="export">导出本轮记录 ↗</button></section>
+</main><footer><span>数据源：HHMI Janelia / Google / Cambridge · MaleCNS</span><span>连接结构来自数据；神经动力学与动作映射是建模选择。</span></footer><script src="/app.js"></script>
+</body></html>

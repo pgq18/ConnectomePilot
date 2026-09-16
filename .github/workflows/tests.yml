@@ -1,0 +1,29 @@
+name: Tests
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  cpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-activate-base: false
+          activate-environment: ""
+          miniforge-version: latest
+      - name: Create project Conda environment
+        run: conda env create --prefix "$PWD/.conda" --file environment.yml
+      - name: Install CPU training dependencies
+        run: |
+          "$PWD/.conda/bin/python" -m pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cpu
+          "$PWD/.conda/bin/python" -m pip install -r requirements-data.txt -r requirements-rl.txt
+      - name: Run tests without connectome downloads
+        run: "$PWD/.conda/bin/python" -m unittest discover -s tests -v

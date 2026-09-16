@@ -1,0 +1,4 @@
+-r requirements.txt
+gymnasium>=0.29,<2
+stable-baselines3>=2.3,<3
+numba==0.62.1
