@@ -2,13 +2,13 @@
 
 ## Environment
 
-Use a dedicated project Conda prefix. Run Python through its absolute path:
+Create and activate the project Conda environment:
 
 ```bash
-PROJECT_DIR="$(pwd)"
-conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
-"$PROJECT_DIR/.conda/bin/python" -m unittest discover -s tests -v
+conda env create -f environment.yml
+conda activate fruit-fly-lab
+python -m pip install -r requirements/train.txt
+python -m unittest discover -s tests -v
 ```
 
 Do not install project dependencies into system Python. See [GPU setup](docs/WORKSTATION.md) for CUDA experiments.

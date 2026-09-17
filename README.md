@@ -55,17 +55,17 @@ The web interface uses the earlier controllers. The latest 4M subgraph policy ru
 
 ## Quick start
 
-Install Conda first. All Python packages belong in the project-specific environment. Run these commands from the repository root:
+Install Conda first. All Python packages belong in the project-specific environment. Conda manages the environment location; it does not need to live inside the repository. Run:
 
 ```bash
 git clone https://github.com/pgq18/ConnectomePilot.git
 cd ConnectomePilot
-PROJECT_DIR="$(pwd)"
-conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
+conda env create -f environment.yml
+conda activate fruit-fly-lab
 ./launch.sh --open
 ```
 
-Open <http://127.0.0.1:8765>. The base controller and rule-based obstacle avoidance work without downloading connectome data. Fly-brain mode remains disabled until the data is available. On macOS, you can also double-click `launch.command`.
+Open <http://127.0.0.1:8765>. The base controller and rule-based obstacle avoidance work without downloading connectome data. Fly-brain mode remains disabled until the data is available. Run the launch command from a terminal with `fruit-fly-lab` activated.
 
 ### Set goals interactively
 
@@ -78,18 +78,18 @@ The published benchmark scores use the original fixed-goal tasks. Performance on
 ### Prepare the measured connectome
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" scripts/prepare_data.py --check-network
-"$PROJECT_DIR/.conda/bin/python" scripts/prepare_data.py
+python scripts/prepare_data.py --check-network
+python scripts/prepare_data.py
 ```
 
 The script downloads approximately 1.2 GB of raw tables from the official MaleCNS storage and produces sparse weights, annotations, and provenance hashes. Preprocessing requires additional RAM and disk space. The full graph loaded by this project contains **166,700 neurons and 25,582,938 directed connections**.
 
-Downloads support validation, retries, and resumption. If a proxy is needed, copy `config/network.example.json` to `config/network.local.json` and edit it, or pass `--proxy http://127.0.0.1:PORT`. Use `--no-proxy` for a direct connection. On macOS, `prepare-and-launch.command` prepares the data before opening the web interface.
+Downloads support validation, retries, and resumption. If a proxy is needed, copy `config/network.example.json` to `config/network.local.json` and edit it, or pass `--proxy http://127.0.0.1:PORT`. Use `--no-proxy` for a direct connection.
 
 ### Install training dependencies
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
+python -m pip install -r requirements/train.txt
 ```
 
 The web demo and small sensor-based PPO runs can use a CPU. The current staged trainers require NVIDIA CUDA. See the [training guide](docs/TRAINING.md) and [workstation guide](docs/WORKSTATION.md) for GPU setup, measured resource use, and reproduction commands.
@@ -148,7 +148,7 @@ Raw data and model checkpoints are not distributed with the Git source. Prepare 
 After installing the training dependencies:
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m unittest discover -s tests -v
+python -m unittest discover -s tests -v
 ```
 
 Tests use explicitly labeled small synthetic graphs to verify interfaces, numerical calculations, and state recovery. These fixtures are not biological experiment results. GitHub Actions runs CPU tests in a dedicated Conda environment without downloading MaleCNS or training models.

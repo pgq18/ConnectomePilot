@@ -16,8 +16,8 @@
 先按[训练指南](TRAINING.md)准备数据和检查点。默认路径是 `results/plasticity/staged-4m/main/staged-72/final.pt`。模型权重不随 Git 源码分发。
 
 ```bash
-PROJECT_DIR="$(pwd)"
-CUDA_VISIBLE_DEVICES=1 "$PROJECT_DIR/.conda/bin/python" scripts/record_navigation_demo.py \
+conda activate fruit-fly-lab
+CUDA_VISIBLE_DEVICES=1 python scripts/record_navigation_demo.py \
   --device cuda:0 --scene 5900002 --output results/videos/map-5900002
 ```
 
@@ -28,18 +28,18 @@ CUDA_VISIBLE_DEVICES=1 "$PROJECT_DIR/.conda/bin/python" scripts/record_navigatio
 ## 渲染与编码
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/viz.txt
-"$PROJECT_DIR/.conda/bin/python" scripts/render_navigation_demo.py \
+python -m pip install -r requirements/viz.txt
+python scripts/render_navigation_demo.py \
   results/videos/map-5900002 --preview
-"$PROJECT_DIR/.conda/bin/python" scripts/render_navigation_demo.py \
+python scripts/render_navigation_demo.py \
   results/videos/map-5900002
-"$PROJECT_DIR/.conda/bin/python" scripts/encode_navigation_demo.py \
+python scripts/encode_navigation_demo.py \
   results/videos/map-5900002
 ```
 
 渲染支持 Mac 系统中文字体与常见 Linux Noto CJK / 文泉驿字体。若自动检测不到，传 `--font /absolute/path/chinese-font.ttc --mono-font /absolute/path/mono.ttf`。
 
-编码需要 FFmpeg/FFprobe。已有工具可直接使用；也可通过 `conda install --prefix "$PROJECT_DIR/.conda" -c conda-forge ffmpeg` 安装到项目环境，再显式传 `--ffmpeg "$PROJECT_DIR/.conda/bin/ffmpeg" --ffprobe "$PROJECT_DIR/.conda/bin/ffprobe"`。
+编码需要 FFmpeg/FFprobe。已有工具可直接使用；也可通过 `conda install -c conda-forge ffmpeg` 安装到项目环境，再显式传 `--ffmpeg "$CONDA_PREFIX/bin/ffmpeg" --ffprobe "$CONDA_PREFIX/bin/ffprobe"`。
 
 画面为 1600 × 900、30 fps。策略按 10 Hz 运行；画面仅插值位置与朝向，1 倍仿真速度播放，首尾附静帧。显示轨迹、距离射线、基础/残差/最终动作、1,314 个下行神经元的简化模型状态。
 

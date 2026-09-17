@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_PYTHON="$PROJECT_DIR/.conda/bin/python"
+# Prefer the activated Conda environment; retain existing local installations.
+PROJECT_PYTHON="${CONDA_PREFIX:-$PROJECT_DIR/.conda}/bin/python"
 if [[ ! -x "$PROJECT_PYTHON" ]]; then
-  echo "Project Conda environment is missing: $PROJECT_PYTHON" >&2
+  echo "Activate the project environment first: conda activate fruit-fly-lab" >&2
   exit 1
 fi
 cd "$PROJECT_DIR"

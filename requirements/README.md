@@ -1,6 +1,6 @@
 # Dependencies
 
-All profiles use the same project Conda environment. Run commands from the repository root with `PROJECT_DIR="$(pwd)"`; always call `"$PROJECT_DIR/.conda/bin/python"`.
+All profiles use the same project Conda environment. Run commands from the repository root after `conda activate fruit-fly-lab`. Conda manages the environment location.
 
 | File | Purpose | When to install |
 |---|---|---|
@@ -10,12 +10,12 @@ All profiles use the same project Conda environment. Run commands from the repos
 | [`viz.txt`](viz.txt) | Base dependencies plus Matplotlib and Pillow | Plots and video frame rendering |
 
 ```bash
-PROJECT_DIR="$(pwd)"
-conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
+conda env create -f environment.yml
+conda activate fruit-fly-lab
 
 # Add the capabilities you need to the same environment.
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/viz.txt
+python -m pip install -r requirements/train.txt
+python -m pip install -r requirements/viz.txt
 ```
 
 The optional profiles include `base.txt`; shared versions are defined once. For NVIDIA training, install the appropriate PyTorch build **before** `train.txt`, as shown in the [workstation guide](../docs/WORKSTATION.md). FFmpeg/FFprobe are separate video-encoding tools; see the [video guide](../docs/VIDEOS.md).

@@ -57,17 +57,17 @@ https://github.com/user-attachments/assets/ffebcfc2-c512-4cb2-a59d-9f2ae0e45254
 
 ## 快速开始
 
-需要已安装 Conda。所有 Python 包安装到项目独立环境；从仓库根目录执行：
+需要已安装 Conda。所有 Python 包安装到独立环境，位置由 Conda 管理，无须放在项目目录下：
 
 ```bash
 git clone https://github.com/pgq18/ConnectomePilot.git
 cd ConnectomePilot
-PROJECT_DIR="$(pwd)"
-conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
+conda env create -f environment.yml
+conda activate fruit-fly-lab
 ./launch.sh --open
 ```
 
-打开 <http://127.0.0.1:8765>。不下载连接数据也可使用基础控制和规则避障；缺少数据时果蝇脑选项禁用。Mac 可双击 `launch.command`。
+打开 <http://127.0.0.1:8765>。不下载连接数据也可使用基础控制和规则避障；缺少数据时果蝇脑选项禁用。启动前在终端激活 `fruit-fly-lab` 环境。
 
 ### 鼠标交互设置目标
 
@@ -80,18 +80,18 @@ conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
 ### 准备真实连接组
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" scripts/prepare_data.py --check-network
-"$PROJECT_DIR/.conda/bin/python" scripts/prepare_data.py
+python scripts/prepare_data.py --check-network
+python scripts/prepare_data.py
 ```
 
 从 MaleCNS 官方存储下载约 1.2 GB 原始表，生成稀疏权重、注释和来源哈希。预处理需要额外内存和磁盘空间；本项目加载的全图含 **166,700 个神经元、25,582,938 条有向连接**。
 
-下载支持校验、重试和断点续传。需要代理时，复制 `config/network.example.json` 为 `config/network.local.json` 并修改，或使用 `--proxy http://127.0.0.1:端口`；`--no-proxy` 强制直连。Mac 的 `prepare-and-launch.command` 会先准备数据，再打开网页。
+下载支持校验、重试和断点续传。需要代理时，复制 `config/network.example.json` 为 `config/network.local.json` 并修改，或使用 `--proxy http://127.0.0.1:端口`；`--no-proxy` 强制直连。
 
 ### 安装训练依赖
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
+python -m pip install -r requirements/train.txt
 ```
 
 网页和小型传感器 PPO 可在 CPU 上运行；当前分阶段训练器要求 NVIDIA CUDA。GPU 安装方法、实测资源和复现命令见[训练指南](docs/TRAINING.md)及[工作站指南](docs/WORKSTATION.md)。
@@ -147,7 +147,7 @@ results/       本地模型、日志、图表和视频（不入 Git）
 安装训练依赖后：
 
 ```bash
-"$PROJECT_DIR/.conda/bin/python" -m unittest discover -s tests -v
+python -m unittest discover -s tests -v
 ```
 
 测试使用明确标注的人工小图验证接口、数值计算和状态恢复，不作为生物实验结果。GitHub Actions 在独立 Conda 环境执行 CPU 测试，无需下载 MaleCNS 或训练模型。

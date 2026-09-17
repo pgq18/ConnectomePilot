@@ -5,12 +5,12 @@
 在工作站克隆仓库，从根目录执行：
 
 ```bash
-PROJECT_DIR="$(pwd)"
-conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
-"$PROJECT_DIR/.conda/bin/python" -m pip install \
+conda env create -f environment.yml
+conda activate fruit-fly-lab
+python -m pip install \
   torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128
-"$PROJECT_DIR/.conda/bin/python" -m pip install -r requirements/train.txt
-"$PROJECT_DIR/.conda/bin/python" -c \
+python -m pip install -r requirements/train.txt
+python -c \
   'import torch; print(torch.__version__); print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0))'
 ```
 
@@ -20,7 +20,7 @@ conda env create --prefix "$PROJECT_DIR/.conda" --file environment.yml
 
 ```bash
 nvidia-smi
-CUDA_VISIBLE_DEVICES=1 "$PROJECT_DIR/.conda/bin/python" -m unittest discover -s tests -v
+CUDA_VISIBLE_DEVICES=1 python -m unittest discover -s tests -v
 ```
 
 既有 4M 阶段每进程 PyTorch 张量峰值约 405.7 MiB，三进程启动时整卡占用约 4 GB；这两个指标口径不同。整脑实验的内存需求另见各轮报告。
@@ -30,8 +30,12 @@ CUDA_VISIBLE_DEVICES=1 "$PROJECT_DIR/.conda/bin/python" -m unittest discover -s 
 在本机建立 SSH 隧道。将 `your-workstation` 和 `/absolute/path/ConnectomePilot` 替换成自己的主机别名及远程项目路径：
 
 ```bash
-ssh -L 127.0.0.1:8766:127.0.0.1:8766 -o ExitOnForwardFailure=yes your-workstation \
-  'cd /absolute/path/ConnectomePilot && ./launch.sh --port 8766'
+ssh -t -L 127.0.0.1:8766:127.0.0.1:8766 -o ExitOnForwardFailure=yes your-workstation
+
+# 在远程终端中执行：
+conda activate fruit-fly-lab
+cd /absolute/path/ConnectomePilot
+./launch.sh --port 8766
 ```
 
 然后打开 <http://127.0.0.1:8766>。服务绑定回环地址，终端保持连接即可。训练不依赖网页是否打开。
